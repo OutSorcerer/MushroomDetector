@@ -23,7 +23,15 @@ namespace MushroomDetector.Droid
         {
             var mappedByteBuffer = GetModelAsMappedByteBuffer();
 
-            var interpreter = new Xamarin.TensorFlow.Lite.Interpreter(mappedByteBuffer);
+            // The following line with fail with compilation error
+            // Error CS0234  The type or namespace name 'GPU' does not exist in the namespace 'Xamarin.TensorFlow.Lite' (are you missing an assembly reference?)
+            var gpuDelegate = new Xamarin.TensorFlow.Lite.GPU.GpuDelegate();
+            Xamarin.TensorFlow.Lite.Interpreter.Options options = new Xamarin.TensorFlow.Lite.Interpreter.Options().AddDelegate(gpuDelegate);
+            var interpreter = new Xamarin.TensorFlow.Lite.Interpreter(mappedByteBuffer, options);
+            
+            // If we comment 3 lines above and uncomment 1 line below everything works fine.
+            //var interpreter = new Xamarin.TensorFlow.Lite.Interpreter(mappedByteBuffer);
+
 
             var tensor = interpreter.GetInputTensor(0);
 
